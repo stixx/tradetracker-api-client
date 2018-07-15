@@ -51,7 +51,9 @@ class TradeTrackerClient
                 $authenticate->isDemo()
             );
         } catch (\Exception $exception) {
-            throw new AuthenticationException('Failed to authenticate.');
+            throw new AuthenticationException(
+                sprintf('Failed to authenticate with message "%s".', $exception->getMessage())
+            );
         }
     }
 
@@ -269,6 +271,20 @@ class TradeTrackerClient
         return $this->execute(__FUNCTION__, new Mapper\FeedCategoryMapper(), [
             $affiliateSiteId,
             $feedId,
+        ]);
+    }
+
+    /**
+     * @param int                           $affiliateSiteId
+     * @param Filter\FeedProductFilter|null $filter
+     *
+     * @return Model\FeedProduct[]
+     */
+    public function getFeedProducts(int $affiliateSiteId, Filter\FeedProductFilter $filter = null)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\FeedProductMapper(), [
+            $affiliateSiteId,
+            $filter,
         ]);
     }
 }
