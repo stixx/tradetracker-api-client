@@ -296,4 +296,16 @@ class TradeTrackerClient
             $filter,
         ]);
     }
+
+    /**
+     * @param Filter\PaymentFilter|null $filter
+     *
+     * @return Model\Payment[]
+     */
+    public function getPayments(Filter\PaymentFilter $filter = null)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\PaymentMapper(), [
+            $filter,
+        ]);
+    }
 }
