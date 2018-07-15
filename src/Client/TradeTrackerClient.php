@@ -257,4 +257,18 @@ class TradeTrackerClient
             $filter,
         ]);
     }
+
+    /**
+     * @param int $affiliateSiteId
+     * @param int $feedId
+     *
+     * @return Model\FeedCategory[]
+     */
+    public function getFeedProductCategories(int $affiliateSiteId, int $feedId)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\FeedCategoryMapper(), [
+            $affiliateSiteId,
+            $feedId,
+        ]);
+    }
 }
