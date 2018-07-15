@@ -3,44 +3,9 @@
 namespace Hypeit\TradeTracker\Client;
 
 use Hypeit\TradeTracker\Exception\AuthenticationException;
-use Hypeit\TradeTracker\Filter\AffiliateSiteFilter;
-use Hypeit\TradeTracker\Filter\CampaignFilter;
-use Hypeit\TradeTracker\Filter\CampaignNewsItemFilter;
-use Hypeit\TradeTracker\Filter\ClickTransactionFilter;
-use Hypeit\TradeTracker\Filter\ConversionTransactionFilter;
-use Hypeit\TradeTracker\Filter\FeedFilter;
-use Hypeit\TradeTracker\Filter\ReportAffiliateSiteFilter;
-use Hypeit\TradeTracker\Filter\ReportCampaignFilter;
-use Hypeit\TradeTracker\Filter\ReportReferenceFilter;
-use Hypeit\TradeTracker\Mapper\AffiliateSiteCategoryMapper;
-use Hypeit\TradeTracker\Mapper\AffiliateSiteTypeMapper;
-use Hypeit\TradeTracker\Mapper\CampaignCategoryMapper;
-use Hypeit\TradeTracker\Mapper\CampaignCommissionExtendedMapper;
-use Hypeit\TradeTracker\Mapper\CampaignMapper;
-use Hypeit\TradeTracker\Mapper\CampaignNewsItemMapper;
-use Hypeit\TradeTracker\Mapper\ClickTransactionMapper;
-use Hypeit\TradeTracker\Mapper\ConversionTransactionMapper;
-use Hypeit\TradeTracker\Mapper\FeedMapper;
-use Hypeit\TradeTracker\Mapper\MapperInterface;
-use Hypeit\TradeTracker\Mapper\AffiliateSiteMapper;
-use Hypeit\TradeTracker\Mapper\ReportCampaignMapper;
-use Hypeit\TradeTracker\Mapper\ReportDataMapper;
-use Hypeit\TradeTracker\Mapper\ReportReferenceMapper;
-use Hypeit\TradeTracker\Model\AffiliateSite;
-use Hypeit\TradeTracker\Model\AffiliateSiteCategory;
-use Hypeit\TradeTracker\Model\AffiliateSiteType;
-use Hypeit\TradeTracker\Model\Authenticate;
-use Hypeit\TradeTracker\Model\Campaign;
-use Hypeit\TradeTracker\Model\CampaignCategory;
-use Hypeit\TradeTracker\Model\CampaignCommissionExtended;
-use Hypeit\TradeTracker\Model\CampaignNewsItem;
-use Hypeit\TradeTracker\Model\CampaignSubscriptionAction;
-use Hypeit\TradeTracker\Model\ClickTransaction;
-use Hypeit\TradeTracker\Model\ConversionTransaction;
-use Hypeit\TradeTracker\Model\Feed;
-use Hypeit\TradeTracker\Model\ReportCampaign;
-use Hypeit\TradeTracker\Model\ReportData;
-use Hypeit\TradeTracker\Model\ReportReference;
+use Hypeit\TradeTracker\Filter;
+use Hypeit\TradeTracker\Mapper;
+use Hypeit\TradeTracker\Model;
 
 class TradeTrackerClient
 {
@@ -53,12 +18,12 @@ class TradeTrackerClient
      * TradeTrackerClient constructor.
      *
      * @param string       $wsdl
-     * @param Authenticate $authenticate
+     * @param Model\Authenticate $authenticate
      * @param array|null   $options
      *
      * @throws AuthenticationException
      */
-    public function __construct(string $wsdl, Authenticate $authenticate, array $options = null)
+    public function __construct(string $wsdl, Model\Authenticate $authenticate, array $options = null)
     {
         if (null === $options) {
             $options = array('compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP);
@@ -71,11 +36,11 @@ class TradeTrackerClient
     /**
      * Connect and authenticate to initialize the client.
      *
-     * @param Authenticate $authenticate
+     * @param Model\Authenticate $authenticate
      *
      * @throws AuthenticationException
      */
-    private function connect(Authenticate $authenticate)
+    private function connect(Model\Authenticate $authenticate)
     {
         try {
             $this->client->authenticate(
@@ -90,7 +55,7 @@ class TradeTrackerClient
         }
     }
 
-    private function execute($method, MapperInterface $mapper, array $arguments = array())
+    private function execute($method, Mapper\MapperInterface $mapper, array $arguments = array())
     {
         $data = [];
         $items = call_user_func_array(array($this->client, $method), $arguments);
@@ -107,64 +72,64 @@ class TradeTrackerClient
     }
 
     /**
-     * @param AffiliateSiteFilter|null $filter
+     * @param Filter\AffiliateSiteFilter|null $filter
      *
-     * @return AffiliateSite[]
+     * @return Model\AffiliateSite[]
      */
-    public function getAffiliateSites(AffiliateSiteFilter $filter = null)
+    public function getAffiliateSites(Filter\AffiliateSiteFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new AffiliateSiteMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\AffiliateSiteMapper(), [
             $filter,
         ]);
     }
 
     /**
-     * @return AffiliateSiteType[]
+     * @return Model\AffiliateSiteType[]
      */
     public function getAffiliateSiteTypes()
     {
-        return $this->execute(__FUNCTION__, new AffiliateSiteTypeMapper());
+        return $this->execute(__FUNCTION__, new Mapper\AffiliateSiteTypeMapper());
     }
 
     /**
-     * @return AffiliateSiteCategory[]
+     * @return Model\AffiliateSiteCategory[]
      */
     public function getAffiliateSiteCategories()
     {
-        return $this->execute(__FUNCTION__, new AffiliateSiteCategoryMapper());
+        return $this->execute(__FUNCTION__, new Mapper\AffiliateSiteCategoryMapper());
     }
 
     /**
      * @param int                 $affiliateSiteId
-     * @param CampaignFilter|null $filter
+     * @param Filter\CampaignFilter|null $filter
      *
-     * @return Campaign[]
+     * @return Model\Campaign[]
      */
-    public function getCampaigns(int $affiliateSiteId, CampaignFilter $filter = null)
+    public function getCampaigns(int $affiliateSiteId, Filter\CampaignFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new CampaignMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\CampaignMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
     }
 
     /**
-     * @return CampaignCategory[]
+     * @return Model\CampaignCategory[]
      */
     public function getCampaignCategories()
     {
-        return $this->execute(__FUNCTION__, new CampaignCategoryMapper());
+        return $this->execute(__FUNCTION__, new Mapper\CampaignCategoryMapper());
     }
 
     /**
      * @param int $affiliateSiteId
      * @param int $campaignId
      *
-     * @return CampaignCommissionExtended
+     * @return Model\CampaignCommissionExtended
      */
     public function getCampaignCommissionExtended(int $affiliateSiteId, int $campaignId)
     {
-        $data = $this->execute(__FUNCTION__, new CampaignCommissionExtendedMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\CampaignCommissionExtendedMapper(), [
             $affiliateSiteId,
             $campaignId,
         ]);
@@ -182,36 +147,36 @@ class TradeTrackerClient
     public function changeCampaignSubscription(
         int $affiliateSiteId,
         int $campaignId,
-        string $action = CampaignSubscriptionAction::SUBSCRIBE
+        string $action = Model\CampaignSubscriptionAction::SUBSCRIBE
     ) {
         $this->client->changeCampaignSubscription(
             $affiliateSiteId,
             $campaignId,
-            new CampaignSubscriptionAction($action)
+            new Model\CampaignSubscriptionAction($action)
         );
     }
 
     /**
-     * @param CampaignNewsItemFilter|null $filter
+     * @param Filter\CampaignNewsItemFilter|null $filter
      *
-     * @return CampaignNewsItem[]
+     * @return Model\CampaignNewsItem[]
      */
-    public function getCampaignNewsItems(CampaignNewsItemFilter $filter = null)
+    public function getCampaignNewsItems(Filter\CampaignNewsItemFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new CampaignNewsItemMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\CampaignNewsItemMapper(), [
             $filter,
         ]);
     }
 
     /**
      * @param int                    $affiliateSiteId
-     * @param ClickTransactionFilter $filter
+     * @param Filter\ClickTransactionFilter $filter
      *
-     * @return ClickTransaction[]
+     * @return Model\ClickTransaction[]
      */
-    public function getClickTransactions(int $affiliateSiteId, ClickTransactionFilter $filter = null)
+    public function getClickTransactions(int $affiliateSiteId, Filter\ClickTransactionFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new ClickTransactionMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\ClickTransactionMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
@@ -219,13 +184,13 @@ class TradeTrackerClient
 
     /**
      * @param int                              $affiliateSiteId
-     * @param ConversionTransactionFilter|null $filter
+     * @param Filter\ConversionTransactionFilter|null $filter
      *
-     * @return ConversionTransaction[]
+     * @return Model\ConversionTransaction[]
      */
-    public function getConversionTransactions(int $affiliateSiteId, ConversionTransactionFilter $filter = null)
+    public function getConversionTransactions(int $affiliateSiteId, Filter\ConversionTransactionFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new ConversionTransactionMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\ConversionTransactionMapper(), [
            $affiliateSiteId,
            $filter,
         ]);
@@ -233,13 +198,13 @@ class TradeTrackerClient
 
     /**
      * @param int                            $affiliateSiteId
-     * @param ReportAffiliateSiteFilter|null $filter
+     * @param Filter\ReportAffiliateSiteFilter|null $filter
      *
-     * @return ReportData
+     * @return Model\ReportData
      */
-    public function getReportAffiliateSite(int $affiliateSiteId, ReportAffiliateSiteFilter $filter = null)
+    public function getReportAffiliateSite(int $affiliateSiteId, Filter\ReportAffiliateSiteFilter $filter = null)
     {
-        $data = $this->execute(__FUNCTION__, new ReportDataMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\ReportDataMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
@@ -249,13 +214,13 @@ class TradeTrackerClient
 
     /**
      * @param int                  $affiliateSiteId
-     * @param ReportCampaignFilter $filter
+     * @param Filter\ReportCampaignFilter $filter
      *
-     * @return ReportCampaign
+     * @return Model\ReportCampaign
      */
-    public function getReportCampaign(int $affiliateSiteId, ReportCampaignFilter $filter)
+    public function getReportCampaign(int $affiliateSiteId, Filter\ReportCampaignFilter $filter)
     {
-        $data = $this->execute(__FUNCTION__, new ReportCampaignMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\ReportCampaignMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
@@ -265,13 +230,13 @@ class TradeTrackerClient
 
     /**
      * @param int                   $affiliateSiteId
-     * @param ReportReferenceFilter $filter
+     * @param Filter\ReportReferenceFilter $filter
      *
-     * @return ReportReference
+     * @return Model\ReportReference
      */
-    public function getReportReference(int $affiliateSiteId, ReportReferenceFilter $filter)
+    public function getReportReference(int $affiliateSiteId, Filter\ReportReferenceFilter $filter)
     {
-        $data = $this->execute(__FUNCTION__, new ReportReferenceMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\ReportReferenceMapper(), [
             $affiliateSiteId,
             $filter
         ]);
@@ -281,13 +246,13 @@ class TradeTrackerClient
 
     /**
      * @param int             $affiliateSiteId
-     * @param FeedFilter|null $filter
+     * @param Filter\FeedFilter|null $filter
      *
-     * @return Feed[]
+     * @return Model\Feed[]
      */
-    public function getFeeds(int $affiliateSiteId, FeedFilter $filter = null)
+    public function getFeeds(int $affiliateSiteId, Filter\FeedFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new FeedMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\FeedMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
