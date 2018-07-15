@@ -17,9 +17,9 @@ class TradeTrackerClient
     /**
      * TradeTrackerClient constructor.
      *
-     * @param string       $wsdl
-     * @param Model\Authenticate $authenticate
-     * @param array|null   $options
+     * @param string             $wsdl         The wsdl url of the service.
+     * @param Model\Authenticate $authenticate The model used to authenticate.
+     * @param array|null         $options      The options used for the client.
      *
      * @throws AuthenticationException
      */
@@ -57,6 +57,15 @@ class TradeTrackerClient
         }
     }
 
+    /**
+     * Executes the api method call.
+     *
+     * @param string                 $method    The api method to call.
+     * @param Mapper\MapperInterface $mapper    The mapper required to map the values.
+     * @param array                  $arguments The arguments used with the method call.
+     *
+     * @return array
+     */
     private function execute($method, Mapper\MapperInterface $mapper, array $arguments = array())
     {
         $data = [];
