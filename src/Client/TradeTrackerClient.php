@@ -392,8 +392,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param \DateTime $startDate
-     * @param \DateTime $endDate
+     * Returns all transactions by account.
+     *
+     * @param \DateTime $startDate The start date of the transactions.
+     * @param \DateTime $endDate   The end date of the transactions.
      *
      * @return array
      */
