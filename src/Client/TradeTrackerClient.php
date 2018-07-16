@@ -83,7 +83,9 @@ class TradeTrackerClient
     }
 
     /**
-     * @param Filter\AffiliateSiteFilter|null $filter
+     * Returns a list of available affiliate sites linked to your account.
+     *
+     * @param Filter\AffiliateSiteFilter|null $filter To filter the results.
      *
      * @return Model\AffiliateSite[]
      */
@@ -95,6 +97,8 @@ class TradeTrackerClient
     }
 
     /**
+     * Returns a list of affiliate site types.
+     *
      * @return Model\AffiliateSiteType[]
      */
     public function getAffiliateSiteTypes()
@@ -103,6 +107,8 @@ class TradeTrackerClient
     }
 
     /**
+     * Returns a list of affiliate site categories.
+     *
      * @return Model\AffiliateSiteCategory[]
      */
     public function getAffiliateSiteCategories()
@@ -111,8 +117,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                 $affiliateSiteId
-     * @param Filter\CampaignFilter|null $filter
+     * Returns a list of available campaigns for the given affiliate site.
+     *
+     * @param int                        $affiliateSiteId The affiliate site.
+     * @param Filter\CampaignFilter|null $filter          To filter the results.
      *
      * @return Model\Campaign[]
      */
@@ -125,6 +133,8 @@ class TradeTrackerClient
     }
 
     /**
+     * Returns the available campaign categories.
+     *
      * @return Model\CampaignCategory[]
      */
     public function getCampaignCategories()
@@ -133,8 +143,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int $affiliateSiteId
-     * @param int $campaignId
+     * Returns a extended commission information for the given campaign.
+     *
+     * @param int $affiliateSiteId The affiliate site.
+     * @param int $campaignId      The campaign.
      *
      * @return Model\CampaignCommissionExtended
      */
@@ -149,9 +161,13 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int    $affiliateSiteId
-     * @param int    $campaignId
-     * @param string $action
+     * Change the campaign subscription.
+     *
+     * @param int    $affiliateSiteId The affiliate site.
+     * @param int    $campaignId      The campaign.
+     * @param string $action          The subscription action
+     *
+     * @see CampaignSubscriptionAction
      *
      * @return void
      */
@@ -168,7 +184,9 @@ class TradeTrackerClient
     }
 
     /**
-     * @param Filter\CampaignNewsItemFilter|null $filter
+     * Return the campaign news items.
+     *
+     * @param Filter\CampaignNewsItemFilter|null $filter To filter the results.
      *
      * @return Model\CampaignNewsItem[]
      */
@@ -180,8 +198,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                    $affiliateSiteId
-     * @param Filter\ClickTransactionFilter $filter
+     * Returns the click transactions for the affiliate site.
+     *
+     * @param int                           $affiliateSiteId The affiliate site.
+     * @param Filter\ClickTransactionFilter $filter          To filter the results.
      *
      * @return Model\ClickTransaction[]
      */
@@ -194,8 +214,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                              $affiliateSiteId
-     * @param Filter\ConversionTransactionFilter|null $filter
+     * Returns the conversion transactions for the affiliate site.
+     *
+     * @param int                                     $affiliateSiteId The affiliate site.
+     * @param Filter\ConversionTransactionFilter|null $filter          To filter the results.
      *
      * @return Model\ConversionTransaction[]
      */
@@ -208,9 +230,12 @@ class TradeTrackerClient
     }
 
     /**
-     * @param Model\TransactionType                    $transactionType
-     * @param int                                      $affiliateSiteId
-     * @param Model\CreateConversionTransactionOptions $options
+     * Creates a conversion transaction for the affiliate site.
+     * Permissions needed to execute this call.
+     *
+     * @param Model\TransactionType                    $transactionType The transaction type.
+     * @param int                                      $affiliateSiteId The affiliate site.
+     * @param Model\CreateConversionTransactionOptions $options         Transaction options.
      *
      * @return int
      */
@@ -223,8 +248,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                            $affiliateSiteId
-     * @param Filter\ReportAffiliateSiteFilter|null $filter
+     * Returns a report for the given affiliate site.
+     *
+     * @param int                                   $affiliateSiteId The affiliate site.
+     * @param Filter\ReportAffiliateSiteFilter|null $filter          To filter the results.
      *
      * @return Model\ReportData
      */
@@ -239,8 +266,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                  $affiliateSiteId
-     * @param Filter\ReportCampaignFilter $filter
+     * Returns a report for the given campaign.
+     *
+     * @param int                         $affiliateSiteId The affiliate site.
+     * @param Filter\ReportCampaignFilter $filter          To filter the results.
      *
      * @return Model\ReportCampaign
      */
@@ -255,8 +284,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                   $affiliateSiteId
-     * @param Filter\ReportReferenceFilter $filter
+     * Returns a report reference.
+     *
+     * @param int                          $affiliateSiteId The affiliate site.
+     * @param Filter\ReportReferenceFilter $filter          To filter the results.
      *
      * @return Model\ReportReference
      */
@@ -271,8 +302,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int             $affiliateSiteId
-     * @param Filter\FeedFilter|null $filter
+     * Returns the available feeds.
+     *
+     * @param int                    $affiliateSiteId The affiliate site.
+     * @param Filter\FeedFilter|null $filter          To filter the results.
      *
      * @return Model\Feed[]
      */
@@ -285,8 +318,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int $affiliateSiteId
-     * @param int $feedId
+     * Returns the available feed categories.
+     *
+     * @param int $affiliateSiteId The affiliate site.
+     * @param int $feedId          The feed id.
      *
      * @return Model\FeedCategory[]
      */
@@ -299,8 +334,10 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                           $affiliateSiteId
-     * @param Filter\FeedProductFilter|null $filter
+     * Returns the available feed products.
+     *
+     * @param int                           $affiliateSiteId The affiliate site.
+     * @param Filter\FeedProductFilter|null $filter          To filter the results.
      *
      * @return Model\FeedProduct[]
      */
@@ -313,7 +350,9 @@ class TradeTrackerClient
     }
 
     /**
-     * @param Filter\PaymentFilter|null $filter
+     * Returns a list of payments linked to your account.
+     *
+     * @param Filter\PaymentFilter|null $filter To filter the results.
      *
      * @return Model\Payment[]
      */
@@ -325,7 +364,9 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int $conversionTransactionId
+     * Returns a list of attributions per affiliate site.
+     *
+     * @param int $conversionTransactionId The conversion transaction id.
      *
      * @return Model\Attribution[]
      */
@@ -337,7 +378,9 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int $conversionTransactionId
+     * Returns a list of touch points.
+     *
+     * @param int $conversionTransactionId The conversion transaction id.
      *
      * @return Model\Touchpoint[]
      */
