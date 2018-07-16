@@ -7,6 +7,10 @@ use Hypeit\TradeTracker\Filter;
 use Hypeit\TradeTracker\Mapper;
 use Hypeit\TradeTracker\Model;
 
+/**
+ * Class TradeTrackerClient
+ * @package Hypeit\TradeTracker\Client
+ */
 class TradeTrackerClient
 {
     /**
