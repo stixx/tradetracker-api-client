@@ -320,4 +320,16 @@ class TradeTrackerClient
             $conversionTransactionId,
         ]);
     }
+
+    /**
+     * @param int $conversionTransactionId
+     *
+     * @return Model\Touchpoint[]
+     */
+    public function getTouchpoints(int $conversionTransactionId)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\TouchpointMapper(), [
+            $conversionTransactionId,
+        ]);
+    }
 }
