@@ -1,0 +1,17 @@
+language: php
+
+sudo: false
+
+matrix:
+  include:
+    - php: 7.1
+
+before_install: composer self-update
+
+install: composer install
+
+before_script:
+  - mkdir -p build/logs
+
+script:
+  - vendor/bin/phpunit --log-junit build/logs/phpunit.xml
