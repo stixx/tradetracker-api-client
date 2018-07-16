@@ -19,9 +19,9 @@ You must configure authentication in order to use the client.
 $authentication = new Authentication(
     12345, // The customer id
     'passphrase', // The passphrase
-    true, // Whether to not allow changes
-    'en_GB', // The locale to be used for results.
-    false // Whether to receive demo results.
+    true, // Whether to not allow changes (optional)
+    'en_GB', // The locale to be used for results. (optional)
+    false // Whether to receive demo results. (optional)
 );
 ```
 
@@ -51,7 +51,7 @@ Common methods are:
 - getFeedProductCategories
 - getFeedProducts
 
-Some method calls can have a optional filter:
+Some method calls can have an optional filter:
 
 ```php
 $filter = new AffiliateSiteFilter();
@@ -68,4 +68,4 @@ $ composer test
 
 ## License
 
-The MIT License (MIT). Please see [License File](LICENSE.md) for more information.
+The MIT License (MIT). Please see [License File](LICENSE) for more information.
