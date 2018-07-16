@@ -390,4 +390,28 @@ class TradeTrackerClient
             $conversionTransactionId,
         ]);
     }
+
+    /**
+     * Returns all transactions by account.
+     *
+     * @param \DateTime $startDate The start date of the transactions.
+     * @param \DateTime $endDate   The end date of the transactions.
+     *
+     * @return array
+     */
+    public function getTransactions(\DateTime $startDate, \DateTime $endDate)
+    {
+        $data = [];
+        $affiliateSites = $this->getAffiliateSites();
+
+        $filter = new Filter\ConversionTransactionFilter();
+        $filter->setRegistrationDateFrom($startDate->format('Y-m-d'));
+        $filter->setRegistrationDateTo($endDate->format('Y-m-d'));
+
+        foreach ($affiliateSites as $affiliateSite) {
+            $data[$affiliateSite->getId()][] = $this->getConversionTransactions($affiliateSite->getId(), $filter);
+        }
+
+        return $data;
+    }
 }
