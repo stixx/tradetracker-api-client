@@ -208,6 +208,21 @@ class TradeTrackerClient
     }
 
     /**
+     * @param Model\TransactionType                    $transactionType
+     * @param int                                      $affiliateSiteId
+     * @param Model\CreateConversionTransactionOptions $options
+     *
+     * @return int
+     */
+    public function createConversionTransaction(
+        Model\TransactionType $transactionType,
+        int $affiliateSiteId,
+        Model\CreateConversionTransactionOptions $options
+    ) {
+        return $this->client->createConversionTransaction($transactionType->getType(), $affiliateSiteId, $options);
+    }
+
+    /**
      * @param int                            $affiliateSiteId
      * @param Filter\ReportAffiliateSiteFilter|null $filter
      *
