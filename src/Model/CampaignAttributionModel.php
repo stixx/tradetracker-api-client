@@ -14,7 +14,7 @@ class CampaignAttributionModel
      *
      * @param string|null $attribute
      */
-    public function __construct($attribute)
+    public function __construct($attribute = null)
     {
         $this->attribute = $attribute;
     }

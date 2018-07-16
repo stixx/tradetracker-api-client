@@ -390,4 +390,26 @@ class TradeTrackerClient
             $conversionTransactionId,
         ]);
     }
+
+    /**
+     * @param \DateTime $startDate
+     * @param \DateTime $endDate
+     *
+     * @return array
+     */
+    public function getTransactions(\DateTime $startDate, \DateTime $endDate)
+    {
+        $affiliateSites = $this->getAffiliateSites();
+        $data = [];
+
+        $filter = new Filter\ConversionTransactionFilter();
+        $filter->setRegistrationDateFrom($startDate->format('Y-m-d'));
+        $filter->setRegistrationDateTo($endDate->format('Y-m-d'));
+
+        foreach ($affiliateSites as $affiliateSite) {
+            $data[$affiliateSite->getId()][] = $this->getConversionTransactions($affiliateSite->getId(), $filter);
+        }
+
+        return $data;
+    }
 }
