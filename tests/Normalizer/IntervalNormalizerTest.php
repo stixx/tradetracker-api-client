@@ -40,7 +40,7 @@ class IntervalNormalizerTest extends TestCase
     }
 
     /**
-     * @dataProvider()
+     * Data provider for @see testNormalize
      */
     public function intervalProvider()
     {
