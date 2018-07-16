@@ -3,44 +3,9 @@
 namespace Hypeit\TradeTracker\Client;
 
 use Hypeit\TradeTracker\Exception\AuthenticationException;
-use Hypeit\TradeTracker\Filter\AffiliateSiteFilter;
-use Hypeit\TradeTracker\Filter\CampaignFilter;
-use Hypeit\TradeTracker\Filter\CampaignNewsItemFilter;
-use Hypeit\TradeTracker\Filter\ClickTransactionFilter;
-use Hypeit\TradeTracker\Filter\ConversionTransactionFilter;
-use Hypeit\TradeTracker\Filter\FeedFilter;
-use Hypeit\TradeTracker\Filter\ReportAffiliateSiteFilter;
-use Hypeit\TradeTracker\Filter\ReportCampaignFilter;
-use Hypeit\TradeTracker\Filter\ReportReferenceFilter;
-use Hypeit\TradeTracker\Mapper\AffiliateSiteCategoryMapper;
-use Hypeit\TradeTracker\Mapper\AffiliateSiteTypeMapper;
-use Hypeit\TradeTracker\Mapper\CampaignCategoryMapper;
-use Hypeit\TradeTracker\Mapper\CampaignCommissionExtendedMapper;
-use Hypeit\TradeTracker\Mapper\CampaignMapper;
-use Hypeit\TradeTracker\Mapper\CampaignNewsItemMapper;
-use Hypeit\TradeTracker\Mapper\ClickTransactionMapper;
-use Hypeit\TradeTracker\Mapper\ConversionTransactionMapper;
-use Hypeit\TradeTracker\Mapper\FeedMapper;
-use Hypeit\TradeTracker\Mapper\MapperInterface;
-use Hypeit\TradeTracker\Mapper\AffiliateSiteMapper;
-use Hypeit\TradeTracker\Mapper\ReportCampaignMapper;
-use Hypeit\TradeTracker\Mapper\ReportDataMapper;
-use Hypeit\TradeTracker\Mapper\ReportReferenceMapper;
-use Hypeit\TradeTracker\Model\AffiliateSite;
-use Hypeit\TradeTracker\Model\AffiliateSiteCategory;
-use Hypeit\TradeTracker\Model\AffiliateSiteType;
-use Hypeit\TradeTracker\Model\Authenticate;
-use Hypeit\TradeTracker\Model\Campaign;
-use Hypeit\TradeTracker\Model\CampaignCategory;
-use Hypeit\TradeTracker\Model\CampaignCommissionExtended;
-use Hypeit\TradeTracker\Model\CampaignNewsItem;
-use Hypeit\TradeTracker\Model\CampaignSubscriptionAction;
-use Hypeit\TradeTracker\Model\ClickTransaction;
-use Hypeit\TradeTracker\Model\ConversionTransaction;
-use Hypeit\TradeTracker\Model\Feed;
-use Hypeit\TradeTracker\Model\ReportCampaign;
-use Hypeit\TradeTracker\Model\ReportData;
-use Hypeit\TradeTracker\Model\ReportReference;
+use Hypeit\TradeTracker\Filter;
+use Hypeit\TradeTracker\Mapper;
+use Hypeit\TradeTracker\Model;
 
 class TradeTrackerClient
 {
@@ -52,13 +17,13 @@ class TradeTrackerClient
     /**
      * TradeTrackerClient constructor.
      *
-     * @param string       $wsdl
-     * @param Authenticate $authenticate
-     * @param array|null   $options
+     * @param string             $wsdl         The wsdl url of the service.
+     * @param Model\Authenticate $authenticate The model used to authenticate.
+     * @param array|null         $options      The options used for the client.
      *
      * @throws AuthenticationException
      */
-    public function __construct(string $wsdl, Authenticate $authenticate, array $options = null)
+    public function __construct(string $wsdl, Model\Authenticate $authenticate, array $options = null)
     {
         if (null === $options) {
             $options = array('compression' => SOAP_COMPRESSION_ACCEPT | SOAP_COMPRESSION_GZIP);
@@ -71,11 +36,11 @@ class TradeTrackerClient
     /**
      * Connect and authenticate to initialize the client.
      *
-     * @param Authenticate $authenticate
+     * @param Model\Authenticate $authenticate
      *
      * @throws AuthenticationException
      */
-    private function connect(Authenticate $authenticate)
+    private function connect(Model\Authenticate $authenticate)
     {
         try {
             $this->client->authenticate(
@@ -86,11 +51,22 @@ class TradeTrackerClient
                 $authenticate->isDemo()
             );
         } catch (\Exception $exception) {
-            throw new AuthenticationException('Failed to authenticate.');
+            throw new AuthenticationException(
+                sprintf('Failed to authenticate with message "%s".', $exception->getMessage())
+            );
         }
     }
 
-    private function execute($method, MapperInterface $mapper, array $arguments = array())
+    /**
+     * Executes the api method call.
+     *
+     * @param string                 $method    The api method to call.
+     * @param Mapper\MapperInterface $mapper    The mapper required to map the values.
+     * @param array                  $arguments The arguments used with the method call.
+     *
+     * @return array
+     */
+    private function execute($method, Mapper\MapperInterface $mapper, array $arguments = array())
     {
         $data = [];
         $items = call_user_func_array(array($this->client, $method), $arguments);
@@ -107,64 +83,76 @@ class TradeTrackerClient
     }
 
     /**
-     * @param AffiliateSiteFilter|null $filter
+     * Returns a list of available affiliate sites linked to your account.
      *
-     * @return AffiliateSite[]
+     * @param Filter\AffiliateSiteFilter|null $filter To filter the results.
+     *
+     * @return Model\AffiliateSite[]
      */
-    public function getAffiliateSites(AffiliateSiteFilter $filter = null)
+    public function getAffiliateSites(Filter\AffiliateSiteFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new AffiliateSiteMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\AffiliateSiteMapper(), [
             $filter,
         ]);
     }
 
     /**
-     * @return AffiliateSiteType[]
+     * Returns a list of affiliate site types.
+     *
+     * @return Model\AffiliateSiteType[]
      */
     public function getAffiliateSiteTypes()
     {
-        return $this->execute(__FUNCTION__, new AffiliateSiteTypeMapper());
+        return $this->execute(__FUNCTION__, new Mapper\AffiliateSiteTypeMapper());
     }
 
     /**
-     * @return AffiliateSiteCategory[]
+     * Returns a list of affiliate site categories.
+     *
+     * @return Model\AffiliateSiteCategory[]
      */
     public function getAffiliateSiteCategories()
     {
-        return $this->execute(__FUNCTION__, new AffiliateSiteCategoryMapper());
+        return $this->execute(__FUNCTION__, new Mapper\AffiliateSiteCategoryMapper());
     }
 
     /**
-     * @param int                 $affiliateSiteId
-     * @param CampaignFilter|null $filter
+     * Returns a list of available campaigns for the given affiliate site.
      *
-     * @return Campaign[]
+     * @param int                        $affiliateSiteId The affiliate site.
+     * @param Filter\CampaignFilter|null $filter          To filter the results.
+     *
+     * @return Model\Campaign[]
      */
-    public function getCampaigns(int $affiliateSiteId, CampaignFilter $filter = null)
+    public function getCampaigns(int $affiliateSiteId, Filter\CampaignFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new CampaignMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\CampaignMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
     }
 
     /**
-     * @return CampaignCategory[]
+     * Returns the available campaign categories.
+     *
+     * @return Model\CampaignCategory[]
      */
     public function getCampaignCategories()
     {
-        return $this->execute(__FUNCTION__, new CampaignCategoryMapper());
+        return $this->execute(__FUNCTION__, new Mapper\CampaignCategoryMapper());
     }
 
     /**
-     * @param int $affiliateSiteId
-     * @param int $campaignId
+     * Returns a extended commission information for the given campaign.
      *
-     * @return CampaignCommissionExtended
+     * @param int $affiliateSiteId The affiliate site.
+     * @param int $campaignId      The campaign.
+     *
+     * @return Model\CampaignCommissionExtended
      */
     public function getCampaignCommissionExtended(int $affiliateSiteId, int $campaignId)
     {
-        $data = $this->execute(__FUNCTION__, new CampaignCommissionExtendedMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\CampaignCommissionExtendedMapper(), [
             $affiliateSiteId,
             $campaignId,
         ]);
@@ -173,73 +161,103 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int    $affiliateSiteId
-     * @param int    $campaignId
-     * @param string $action
+     * Change the campaign subscription.
+     *
+     * @param int    $affiliateSiteId The affiliate site.
+     * @param int    $campaignId      The campaign.
+     * @param string $action          The subscription action
+     *
+     * @see CampaignSubscriptionAction
      *
      * @return void
      */
     public function changeCampaignSubscription(
         int $affiliateSiteId,
         int $campaignId,
-        string $action = CampaignSubscriptionAction::SUBSCRIBE
+        string $action = Model\CampaignSubscriptionAction::SUBSCRIBE
     ) {
         $this->client->changeCampaignSubscription(
             $affiliateSiteId,
             $campaignId,
-            new CampaignSubscriptionAction($action)
+            new Model\CampaignSubscriptionAction($action)
         );
     }
 
     /**
-     * @param CampaignNewsItemFilter|null $filter
+     * Return the campaign news items.
      *
-     * @return CampaignNewsItem[]
+     * @param Filter\CampaignNewsItemFilter|null $filter To filter the results.
+     *
+     * @return Model\CampaignNewsItem[]
      */
-    public function getCampaignNewsItems(CampaignNewsItemFilter $filter = null)
+    public function getCampaignNewsItems(Filter\CampaignNewsItemFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new CampaignNewsItemMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\CampaignNewsItemMapper(), [
             $filter,
         ]);
     }
 
     /**
-     * @param int                    $affiliateSiteId
-     * @param ClickTransactionFilter $filter
+     * Returns the click transactions for the affiliate site.
      *
-     * @return ClickTransaction[]
+     * @param int                           $affiliateSiteId The affiliate site.
+     * @param Filter\ClickTransactionFilter $filter          To filter the results.
+     *
+     * @return Model\ClickTransaction[]
      */
-    public function getClickTransactions(int $affiliateSiteId, ClickTransactionFilter $filter = null)
+    public function getClickTransactions(int $affiliateSiteId, Filter\ClickTransactionFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new ClickTransactionMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\ClickTransactionMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
     }
 
     /**
-     * @param int                              $affiliateSiteId
-     * @param ConversionTransactionFilter|null $filter
+     * Returns the conversion transactions for the affiliate site.
      *
-     * @return ConversionTransaction[]
+     * @param int                                     $affiliateSiteId The affiliate site.
+     * @param Filter\ConversionTransactionFilter|null $filter          To filter the results.
+     *
+     * @return Model\ConversionTransaction[]
      */
-    public function getConversionTransactions(int $affiliateSiteId, ConversionTransactionFilter $filter = null)
+    public function getConversionTransactions(int $affiliateSiteId, Filter\ConversionTransactionFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new ConversionTransactionMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\ConversionTransactionMapper(), [
            $affiliateSiteId,
            $filter,
         ]);
     }
 
     /**
-     * @param int                            $affiliateSiteId
-     * @param ReportAffiliateSiteFilter|null $filter
+     * Creates a conversion transaction for the affiliate site.
+     * Permissions needed to execute this call.
      *
-     * @return ReportData
+     * @param Model\TransactionType                    $transactionType The transaction type.
+     * @param int                                      $affiliateSiteId The affiliate site.
+     * @param Model\CreateConversionTransactionOptions $options         Transaction options.
+     *
+     * @return int
      */
-    public function getReportAffiliateSite(int $affiliateSiteId, ReportAffiliateSiteFilter $filter = null)
+    public function createConversionTransaction(
+        Model\TransactionType $transactionType,
+        int $affiliateSiteId,
+        Model\CreateConversionTransactionOptions $options
+    ) {
+        return $this->client->createConversionTransaction($transactionType->getType(), $affiliateSiteId, $options);
+    }
+
+    /**
+     * Returns a report for the given affiliate site.
+     *
+     * @param int                                   $affiliateSiteId The affiliate site.
+     * @param Filter\ReportAffiliateSiteFilter|null $filter          To filter the results.
+     *
+     * @return Model\ReportData
+     */
+    public function getReportAffiliateSite(int $affiliateSiteId, Filter\ReportAffiliateSiteFilter $filter = null)
     {
-        $data = $this->execute(__FUNCTION__, new ReportDataMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\ReportDataMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
@@ -248,14 +266,16 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                  $affiliateSiteId
-     * @param ReportCampaignFilter $filter
+     * Returns a report for the given campaign.
      *
-     * @return ReportCampaign
+     * @param int                         $affiliateSiteId The affiliate site.
+     * @param Filter\ReportCampaignFilter $filter          To filter the results.
+     *
+     * @return Model\ReportCampaign
      */
-    public function getReportCampaign(int $affiliateSiteId, ReportCampaignFilter $filter)
+    public function getReportCampaign(int $affiliateSiteId, Filter\ReportCampaignFilter $filter)
     {
-        $data = $this->execute(__FUNCTION__, new ReportCampaignMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\ReportCampaignMapper(), [
             $affiliateSiteId,
             $filter,
         ]);
@@ -264,14 +284,16 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int                   $affiliateSiteId
-     * @param ReportReferenceFilter $filter
+     * Returns a report reference.
      *
-     * @return ReportReference
+     * @param int                          $affiliateSiteId The affiliate site.
+     * @param Filter\ReportReferenceFilter $filter          To filter the results.
+     *
+     * @return Model\ReportReference
      */
-    public function getReportReference(int $affiliateSiteId, ReportReferenceFilter $filter)
+    public function getReportReference(int $affiliateSiteId, Filter\ReportReferenceFilter $filter)
     {
-        $data = $this->execute(__FUNCTION__, new ReportReferenceMapper(), [
+        $data = $this->execute(__FUNCTION__, new Mapper\ReportReferenceMapper(), [
             $affiliateSiteId,
             $filter
         ]);
@@ -280,16 +302,92 @@ class TradeTrackerClient
     }
 
     /**
-     * @param int             $affiliateSiteId
-     * @param FeedFilter|null $filter
+     * Returns the available feeds.
      *
-     * @return Feed[]
+     * @param int                    $affiliateSiteId The affiliate site.
+     * @param Filter\FeedFilter|null $filter          To filter the results.
+     *
+     * @return Model\Feed[]
      */
-    public function getFeeds(int $affiliateSiteId, FeedFilter $filter = null)
+    public function getFeeds(int $affiliateSiteId, Filter\FeedFilter $filter = null)
     {
-        return $this->execute(__FUNCTION__, new FeedMapper(), [
+        return $this->execute(__FUNCTION__, new Mapper\FeedMapper(), [
             $affiliateSiteId,
             $filter,
+        ]);
+    }
+
+    /**
+     * Returns the available feed categories.
+     *
+     * @param int $affiliateSiteId The affiliate site.
+     * @param int $feedId          The feed id.
+     *
+     * @return Model\FeedCategory[]
+     */
+    public function getFeedProductCategories(int $affiliateSiteId, int $feedId)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\FeedCategoryMapper(), [
+            $affiliateSiteId,
+            $feedId,
+        ]);
+    }
+
+    /**
+     * Returns the available feed products.
+     *
+     * @param int                           $affiliateSiteId The affiliate site.
+     * @param Filter\FeedProductFilter|null $filter          To filter the results.
+     *
+     * @return Model\FeedProduct[]
+     */
+    public function getFeedProducts(int $affiliateSiteId, Filter\FeedProductFilter $filter = null)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\FeedProductMapper(), [
+            $affiliateSiteId,
+            $filter,
+        ]);
+    }
+
+    /**
+     * Returns a list of payments linked to your account.
+     *
+     * @param Filter\PaymentFilter|null $filter To filter the results.
+     *
+     * @return Model\Payment[]
+     */
+    public function getPayments(Filter\PaymentFilter $filter = null)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\PaymentMapper(), [
+            $filter,
+        ]);
+    }
+
+    /**
+     * Returns a list of attributions per affiliate site.
+     *
+     * @param int $conversionTransactionId The conversion transaction id.
+     *
+     * @return Model\Attribution[]
+     */
+    public function getAttributions(int $conversionTransactionId)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\AttributionMapper(), [
+            $conversionTransactionId,
+        ]);
+    }
+
+    /**
+     * Returns a list of touch points.
+     *
+     * @param int $conversionTransactionId The conversion transaction id.
+     *
+     * @return Model\Touchpoint[]
+     */
+    public function getTouchpoints(int $conversionTransactionId)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\TouchpointMapper(), [
+            $conversionTransactionId,
         ]);
     }
 }

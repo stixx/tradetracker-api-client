@@ -83,7 +83,7 @@ class FeedFilter
     /**
      * @param string $assignmentStatus
      */
-    public function setAssignmentStatus$assignmentStatus)
+    public function setAssignmentStatus($assignmentStatus)
     {
         $this->assignmentStatus = $assignmentStatus;
     }
