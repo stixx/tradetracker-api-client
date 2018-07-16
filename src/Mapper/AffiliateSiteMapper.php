@@ -17,7 +17,10 @@ class AffiliateSiteMapper implements MapperInterface
         $affiliateSite->setId($value->ID);
         $affiliateSite->setName($value->name);
         $affiliateSite->setUrl($value->URL);
-        $affiliateSite->setInfo((new AffiliateSiteInfoMapper())->hydrate($value->info));
+
+        if (null !== $value->info) {
+            $affiliateSite->setInfo((new AffiliateSiteInfoMapper())->hydrate($value->info));
+        }
 
         return $affiliateSite;
     }

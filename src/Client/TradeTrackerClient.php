@@ -308,4 +308,16 @@ class TradeTrackerClient
             $filter,
         ]);
     }
+
+    /**
+     * @param int $conversionTransactionId
+     *
+     * @return Model\Attribution[]
+     */
+    public function getAttributions(int $conversionTransactionId)
+    {
+        return $this->execute(__FUNCTION__, new Mapper\AttributionMapper(), [
+            $conversionTransactionId,
+        ]);
+    }
 }
