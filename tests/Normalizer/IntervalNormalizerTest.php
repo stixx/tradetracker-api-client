@@ -5,6 +5,10 @@ namespace Hypeit\TradeTracker\Test\Normalizer;
 use Hypeit\TradeTracker\Normalizer\IntervalNormalizer;
 use PHPUnit\Framework\TestCase;
 
+/**
+ * Class IntervalNormalizerTest
+ * @package Hypeit\TradeTracker\Test\Normalizer
+ */
 class IntervalNormalizerTest extends TestCase
 {
     /**
