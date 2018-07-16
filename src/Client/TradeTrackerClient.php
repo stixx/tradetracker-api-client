@@ -38,6 +38,16 @@ class TradeTrackerClient
     }
 
     /**
+     * Returns the soap client used to make api calls.
+     *
+     * @return \SoapClient
+     */
+    public function getClient()
+    {
+        return $this->client;
+    }
+
+    /**
      * Connect and authenticate to initialize the client.
      *
      * @param Model\Authenticate $authenticate
