@@ -13,9 +13,6 @@ class CampaignAffiliatePolicyStatusMapper implements MapperInterface
      */
     public function hydrate($value)
     {
-        $campaignAffiliatePolicyStatus = new CampaignAffiliatePolicyStatus();
-        $campaignAffiliatePolicyStatus->setStatus($value);
-
-        return $campaignAffiliatePolicyStatus;
+        return new CampaignAffiliatePolicyStatus($value);
     }
 }
