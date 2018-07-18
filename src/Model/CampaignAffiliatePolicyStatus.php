@@ -18,7 +18,7 @@ class CampaignAffiliatePolicyStatus
      *
      * @param string|null $status
      */
-    public function __construct($status)
+    public function __construct($status = null)
     {
         $this->status = $status;
     }

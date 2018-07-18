@@ -13,9 +13,6 @@ class CampaignAssignmentStatusMapper implements MapperInterface
      */
     public function hydrate($value)
     {
-        $campaignAssignmentStatus = new CampaignAssignmentStatus();
-        $campaignAssignmentStatus->setStatus($value);
-
-        return $campaignAssignmentStatus;
+        return new CampaignAssignmentStatus($value);
     }
 }
