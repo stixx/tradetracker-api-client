@@ -62,7 +62,7 @@ class CampaignCategory
     /**
      * @return CampaignCategory[]
      */
-    public function getCategories(): array
+    public function getCategories()
     {
         return $this->categories;
     }
