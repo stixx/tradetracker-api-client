@@ -64,7 +64,7 @@ class CampaignCategory
      */
     public function getCategories(): array
     {
-        return $this->categories;
+        return $this->categories ?? [];
     }
 
     /**
