@@ -128,6 +128,27 @@ class CampaignInfo
      * @var CampaignAttributionModel
      */
     private $attributionModelSales;
+    
+    /**
+     * @var string|null
+     */
+    private $timeZone;
+
+    /**
+     * @return string|null
+     */
+    public function getTimeZone(): ?string
+    {
+        return $this->timeZone;
+    }
+
+    /**
+     * @param string|null $timeZone
+     */
+    public function setTimeZone(?string $timeZone): void
+    {
+        $this->timeZone = $timeZone;
+    }
 
     /**
      * @return CampaignCategory

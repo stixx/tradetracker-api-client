@@ -74,6 +74,8 @@ class CampaignInfoMapper implements MapperInterface
         $campaignInfo->setAttributionModelSales(
             (new CampaignAttributionModelMapper())->hydrate($value->attributionModelSales)
         );
+        
+        $campaignInfo->setTimezone($value->timeZone);
 
         return $campaignInfo;
     }
