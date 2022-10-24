@@ -414,9 +414,13 @@ class TradeTrackerClient
      *
      * @return array
      */
-    public function getTransactions(\DateTime $startDate, \DateTime $endDate, array $affiliateSites)
+    public function getTransactions(\DateTime $startDate, \DateTime $endDate, array $affiliateSites = [])
     {
         $data = [];
+        
+        if (empty($affiliateSites)) {
+            $affiliateSites = $this->getAffiliateSites();
+        }
 
         $filter = new Filter\ConversionTransactionFilter();
         $filter->setRegistrationDateFrom($startDate->format('Y-m-d'));
