@@ -410,13 +410,13 @@ class TradeTrackerClient
      *
      * @param \DateTime $startDate The start date of the transactions.
      * @param \DateTime $endDate   The end date of the transactions.
+     * @param Model\AffiliateSite[] $affiliateSites Affiliate site array. Can be obtained with getAffiliateSites() method
      *
      * @return array
      */
-    public function getTransactions(\DateTime $startDate, \DateTime $endDate)
+    public function getTransactions(\DateTime $startDate, \DateTime $endDate, array $affiliateSites)
     {
         $data = [];
-        $affiliateSites = $this->getAffiliateSites();
 
         $filter = new Filter\ConversionTransactionFilter();
         $filter->setRegistrationDateFrom($startDate->format('Y-m-d'));
