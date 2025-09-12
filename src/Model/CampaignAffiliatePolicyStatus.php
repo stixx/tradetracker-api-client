@@ -38,4 +38,12 @@ class CampaignAffiliatePolicyStatus
     {
         $this->status = $status;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->status;
+    }
 }
